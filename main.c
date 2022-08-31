@@ -181,7 +181,7 @@ int main(int argc, char* argv[]){
 
 	fclose(output);
 	fclose(tempFile);
-	unlink(tempFilename);
+	//unlink(tempFilename);
 	free(tempFilename);
 	return 0;
 }

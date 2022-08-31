@@ -436,8 +436,15 @@ render_frame_rect(gd_GIF *gif, uint8_t *buffer)
         for (k = 0; k < gif->fw; k++) {
             index = gif->frame[(gif->fy + j) * gif->width + gif->fx + k];
             color = &gif->palette->colors[index*3];
-            if (!gif->gce.transparency || index != gif->gce.tindex)
+            if (!gif->gce.transparency || index != gif->gce.tindex){
                 memcpy(&buffer[(i+k)*3], color, 3);
+		}
+		else{
+		uint8_t c[3] = { 0, 0x24, 0 };
+		color = c;
+		memcpy(&buffer[(i+k)*3], color, 3);
+		}
+
         }
         i += gif->width;
     }
@@ -490,8 +497,14 @@ gd_get_frame(gd_GIF *gif)
 void
 gd_render_frame(gd_GIF *gif, uint8_t *buffer)
 {
-    memcpy(buffer, gif->canvas, gif->width * gif->height * 3);
-    render_frame_rect(gif, buffer);
+    	memcpy(buffer, gif->canvas, gif->width * gif->height * 3);
+	for(int i = 0; i < gif->width * gif->height; i++){
+			uint8_t* pixel = &gif->canvas[i * 3];
+			pixel[0] = pixel[2] = 0;
+			pixel[1] = 0x24;
+		}
+    
+	render_frame_rect(gif, buffer);
 }
 
 int
